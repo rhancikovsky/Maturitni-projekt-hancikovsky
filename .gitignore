@@ -1,0 +1,5 @@
+__pycache__/
+*.py[cod]
+database/game.db
+best_score.json
+.env

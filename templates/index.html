@@ -1,0 +1,29 @@
+
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <title>Flappy Bird - Žebříček</title>
+</head>
+<body>
+    <h1>Flappy Bird</h1>
+    <h2>Žebříček hráčů</h2>
+
+    <table border="1">
+        <tr>
+            <th>Hráč</th>
+            <th>Skóre</th>
+            <th>Datum hry</th>
+        </tr>
+
+        {% for result in scores %}
+        <tr>
+            <td>{{ result.username }}</td>
+            <td>{{ result.score }}</td>
+            <td>{{ result.played_at }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+        <p><a href="/register">Vytvořit účet</a></p>
+</body>
+</html>

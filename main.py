@@ -3,7 +3,9 @@ import random
 import json
 import os
 import math
-
+import sqlite3
+import sys
+from pathlib import Path
 # Flappy Bird - skolni projekt v Pythonu
 # Spusteni: pip install -r requirements.txt
 #           python main.py
@@ -54,7 +56,22 @@ def save_best_score(score):
             json.dump({"best_score": score}, file)
     except OSError:
         pass
+def save_score_to_database(user_id, score):
+    """Ulozi vysledek hrace do SQLite databaze."""
+    if user_id is None:
+        return
 
+    database_path = Path(__file__).parent / "database" / "game.db"
+
+    connection = sqlite3.connect(database_path)
+
+    connection.execute(
+        "INSERT INTO scores (user_id, score) VALUES (?, ?)",
+        (user_id, score)
+    )
+
+    connection.commit()
+    connection.close()
 
 def draw_text(surface, text, font, color, center):
     """Vykresli text doprostred zadane pozice."""
@@ -202,6 +219,9 @@ def reset_game():
 
 
 def main():
+    user_id = int(sys.argv[1]) if len(sys.argv) > 1 else None
+    score_saved = False
+
     best_score = load_best_score()
     bird, pipes, score, pipe_timer = reset_game()
     state = "menu"  # menu, playing, game_over
@@ -230,6 +250,7 @@ def main():
 
                 elif state == "game_over" and event.key in (pygame.K_SPACE, pygame.K_RETURN):
                     bird, pipes, score, pipe_timer = reset_game()
+                    score_saved = False
                     state = "playing"
                     bird.flap()
 
@@ -242,6 +263,7 @@ def main():
                     bird.flap()
                 elif state == "game_over":
                     bird, pipes, score, pipe_timer = reset_game()
+                    score_saved = False
                     state = "playing"
                     bird.flap()
 
@@ -273,7 +295,9 @@ def main():
 
             ground_scroll += Pipe.SPEED * dt
             background_scroll += 35 * dt
-
+        if state == "game_over" and not score_saved:
+            save_score_to_database(user_id, score)
+            score_saved = True
         elif state == "menu":
             # Jemne poskakovani ptacka v menu
             bird.y = HEIGHT // 2 + math.sin(pygame.time.get_ticks() * 0.004) * 12

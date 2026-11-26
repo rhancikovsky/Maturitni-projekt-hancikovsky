@@ -1,0 +1,32 @@
+
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <title>Přihlášení</title>
+</head>
+<body>
+    <h1>Přihlášení hráče</h1>
+
+    {% if error %}
+        <p style="color: red;">{{ error }}</p>
+    {% endif %}
+
+    <form method="POST">
+        <label>Uživatelské jméno:</label>
+        <input type="text" name="username" required>
+
+        <br><br>
+
+        <label>Heslo:</label>
+        <input type="password" name="password" required>
+
+        <br><br>
+
+        <button type="submit">Přihlásit se</button>
+    </form>
+
+    <p><a href="/register">Vytvořit účet</a></p>
+    <p><a href="/">Zpět na žebříček</a></p>
+</body>
+</html>
